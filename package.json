@@ -16,6 +16,7 @@
     "core-js": "^3.8.3",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "nomosjs": "^0.3.32",
+    "qrcode.vue": "^3.4.1",
     "vue": "^3.2.13",
     "vue-router": "^4.1.6"
   },

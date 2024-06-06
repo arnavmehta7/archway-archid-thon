@@ -1,4 +1,6 @@
 <template>
+
+
   <div :class="{'domain-item': true, 'collapsible': true, 'expanded': !closed || !collapsible}">
     <div class="head">
       <div :class="{'left': true, 'pointer': collapsible}" @click="domainDetails($event);">
@@ -16,6 +18,7 @@
       </div>
     </div>
     <div class="body" v-if="!closed || !collapsible">
+
       <div class="container-c" v-if="token && owner">
         <div class="domain-data top row">
           <!-- Col 1; Image -->
@@ -607,8 +610,22 @@
             <button class="btn btn-primary" v-if="!isReadOnly || (owner.owner == viewer)" @click="executeUpdateMetadata();">Save Changes</button>
           </div>
         </div>
+        <div class="d-flex justify-content-center align-items-center" v-if="domain">
+          <!-- <qrcode-vue :value="`http://localhost:8080/domains/${domain}`" class=""></qrcode-vue> -->
+          <figure class="qrcode my-5">
+            <qrcode-vue value="`http://localhost:8080/domains/${domain}`" class=""></qrcode-vue>
+              <img
+                class="qrcode__image"
+                src="https://archid.app/img/brand/token.png"
+                alt="Chen Fengyuan"
+              />
+          </figure>
+          <button @click="copyLink" class="btn btn-primary mx-5 ml-5">Share</button>
 
+          <!-- <button @click="downloadQRCode" class="btn btn-secondary ml-2">Download QR</button> -->
+        </div>
       </div>
+
       <div class="loading default" v-if="!token"></div>
     </div>
   </div>
@@ -780,6 +797,7 @@
 import { Accounts } from '../../util/client';
 import { ResolveRecord } from '../../util/query';
 import { Token, OwnerOf, Transfer } from '../../util/token';
+import QrcodeVue from 'qrcode.vue';
 import {
   Register,
   RenewRegistration,
@@ -830,7 +848,8 @@ export default {
   components: { 
     ResolverMismatch, 
     Notification, 
-    ManageMarketplaceListing 
+    ManageMarketplaceListing,
+    QrcodeVue
   },
   data: () => ({
     token: null,
@@ -932,6 +951,32 @@ export default {
     if (!this.collapsible) await this.domainDetails();
   },
   methods: {
+    downloadQRCode() {
+      // const qrcodeCanvas = querySelector('canvas');
+      // const link = document.createElement('a');
+      // link.href = qrcodeCanvas.toDataURL('image/png');
+      // link.download = `${this.domain}-qrcode.png`;
+      // link.click();
+    },
+    copyLink() {
+      const link = `http://localhost:8080/domains/${this.domain}`;
+      navigator.clipboard.writeText(link).then(() => {
+        this.notify = {
+          type: "success",
+          title: "Link Copied",
+          msg: "The link has been copied to your clipboard.",
+          img: null,
+        };
+      }).catch(err => {
+        console.log(err);
+        this.notify = {
+          type: "error",
+          title: "Copy Failed",
+          msg: "Failed to copy the link. Please try again.",
+          img: null,
+        };
+      });
+    },
     domainDetails: async function (evt = null) {
       if (evt) {
         if (!this.collapsible 

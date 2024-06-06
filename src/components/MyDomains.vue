@@ -52,6 +52,11 @@
       </div>
     </div>
 
+    <!-- QR Code -->
+    <!-- <div v-if="accounts.length">
+      <qrcode-vue :value="`http://localhost:8080/domains/${accounts[0].address}.arch`"></qrcode-vue>
+    </div> -->
+
     <!-- No search results found -->
     <div v-if="tokens.length && searchThreshold == false && !disconnected"></div>
 
@@ -73,6 +78,7 @@ import { Config, ResolveAddress, ResolveRecord } from '../util/query';
 import { TokensOf } from '../util/token';
 import * as Paging from '../util/pagination';
 import  { Query as MarketplaceQuery } from '../util/marketplace';
+// import QrcodeVue from 'qrcode.vue';
 
 import DomainsBanner from './children/DomainsBanner.vue';
 import DomainListEntry from './children/DomainListEntry.vue';
@@ -102,10 +108,27 @@ export default {
     pageSizes: Paging.ALL_PAGE_SIZES,
     pageSelect: false,
   }),
+  // mounted: function () {
+  //   if (window) this.resumeConnectedState();
+  // },
   mounted: function () {
-    if (window) this.resumeConnectedState();
+    if (window) this.fetchDomainsForAddress('archway1f395p0gg67mmfd5zcqvpnp9cxnu0hg6r9hfczq');
+    
   },
+
   methods: {
+    fetchDomainsForAddress: async function (address) {
+      try {
+        this.cwClient = await Client("offline");
+        this.accounts = [{ address }];
+        await this.tokenIds();
+        await this.tokenStatuses();
+        this.loaded = true;
+      } catch (e) {
+        console.error('Failed to fetch domains for address', e);
+      }
+    },
+
     resumeConnectedState: async function (attempts = 0) {
       if (attempts >= 5) return;
       try {
@@ -116,7 +139,7 @@ export default {
             this.cwClient = await Client(walletType);
             this.accounts = await Accounts(this.cwClient);
           }
-          // console.log('Profile client', {cwClient: this.cwClient, accounts: this.accounts, walletType: walletType});
+          console.log('Profile client', {cwClient: this.cwClient, accounts: this.accounts, walletType: walletType});
 
           // Load tokens
           await this.tokenIds();
