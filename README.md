@@ -10,6 +10,9 @@
 - `npx cap open android`
 - compile & run!
 
+## ALSO, you could check the releases and open the file directly to prevent compiling
+
+
 
 ## Project setup
 ```
