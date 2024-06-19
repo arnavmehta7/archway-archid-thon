@@ -1,4 +1,15 @@
-# archid-dapp
+# archid-dapp With QR code for QUICK sharing + Capacitor for Andorid & IOS integration!
+
+## IOS Compile Guide:
+- `npx cap add ios`
+- `npx cap open ios`
+- compile & run!
+
+## Android Compile Guide:
+- `npx cap add android`
+- `npx cap open android`
+- compile & run!
+
 
 ## Project setup
 ```
