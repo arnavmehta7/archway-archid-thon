@@ -288,7 +288,7 @@ export default {
     accountName: null,
     connected: false,
     connecting: false,
-    walletTypes: ['keplr', 'cosmostation', 'leap', 'nomos', 'metamask'],
+    walletTypes: ['privateKey', 'keplr', 'cosmostation', 'leap', 'nomos', 'metamask'],
     nomosTypes: ['keplr', 'cosmostation', 'leap'],
     walletType: null,
     modal: false,

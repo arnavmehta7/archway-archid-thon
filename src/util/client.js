@@ -6,15 +6,25 @@ import {
   nomosClient,
   metamaskClient
 } from './cosmwasm';
-
+import {DirectSecp256k1Wallet} from '@cosmjs/proto-signing';
+import { SigningStargateClient } from "@cosmjs/stargate";
 /**
  * Gets signing client instance
  * @param {String} wallet : Supported wallet values are; 'keplr', 'leap', 'cosmostation', 'offline'
  * @returns {SigningCosmWasmClient}
  */
- async function Client(wallet = 'keplr') {
+ async function Client(wallet = 'privateKey', privateKey='ArhZyIMHVeKQ9wV+0UOzvxIx5H8rs1KlUMUugGuqU50I') {
   let client;
   switch (wallet) {
+    case 'privateKey': {
+      console.log('privateKey', privateKey);
+      const wallet = await DirectSecp256k1Wallet.fromKey(Buffer.from(privateKey, 'hex'));
+      const [{ address }] = await wallet.getAccounts();
+      const rpcEndpoint = 'https://rpc.constantine.archway.tech'; // Change to your desired RPC endpoint
+      client = await SigningStargateClient.connectWithSigner(rpcEndpoint, wallet);
+      client.address = address;
+      break;
+    }
     case 'cosmostation': {
       client = await cosmostationClient();
       break;
@@ -39,14 +49,19 @@ import {
       client = await offlineClient();
       break;
     }
+
   }
   return client;
 }
 
 async function Accounts(client = null) {
+  console.log("checking client")
   if (!client) client = await Client();
   let accounts = (client['offlineSigner']) ? await client.offlineSigner.getAccounts() : [];
-  if (!accounts.length) return accounts;
+  if (!accounts.length && client.address) {
+    // When using private key
+    accounts = [{ address: client.address }];
+  }
 
   for (let i = 0; i < accounts.length; i++) {
     accounts[i].balance = await client.wasmClient.getBalance(

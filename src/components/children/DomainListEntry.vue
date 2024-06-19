@@ -611,9 +611,8 @@
           </div>
         </div>
         <div class="d-flex justify-content-center align-items-center" v-if="domain">
-          <!-- <qrcode-vue :value="`http://localhost:8080/domains/${domain}`" class=""></qrcode-vue> -->
           <figure class="qrcode my-5">
-            <qrcode-vue value="`http://localhost:8080/domains/${domain}`" class=""></qrcode-vue>
+            <qrcode-vue :value="`http://localhost:8080/domains/${domain}`" class=""></qrcode-vue>
               <img
                 class="qrcode__image"
                 src="https://archid.app/img/brand/token.png"
